@@ -12,10 +12,8 @@ type UserController struct {
 
 func (c *UserController) Index(w http.ResponseWriter, r *http.Request) {
 	users := c.UserRepository.GetAllUsers()
-	log.Println(users)
 
-	w.Write([]byte("USUARIO"))
-	return
+	respondWithJson(w, http.StatusOK, users)
 }
 
 func (c *UserController) Create(w http.ResponseWriter, r *http.Request) {
@@ -28,17 +26,22 @@ func (c *UserController) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Print("[ERROR] wrong JSON")
-	}
-
-	success := c.UserRepository.InsertUser(u)
-
-	if !success {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("usuario adicionado"))
-	return
+	user, err := c.UserRepository.InsertUser(u)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	respondWithJson(w, http.StatusCreated, user)
+}
+
+func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(payload)
 }

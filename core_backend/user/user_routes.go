@@ -1,11 +1,14 @@
 package user
 
-import ("core_back_end/config")
+import (
+	"core_backend/config"
+)
 
 var controller = &UserController{UserRepository: UserRepository{}}
+var routes = config.Routes{{}}
 
 func CreateUserRoutes() config.Routes {
-	var routes = config.Routes{
+	routes := config.Routes{
 		config.Route{
 			"Index - User",
 			"GET",

@@ -1,8 +1,9 @@
 package user
 
 import (
-	"core_back_end/config"
+	"core_backend/config"
 	"log"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const docname = "users"
@@ -15,21 +16,20 @@ func (u UserRepository) GetAllUsers() Users {
 
 	results := Users{}
 
-	if err := c.Find(nil).All(&results); err != nil {
+	if err := c.Find(bson.M{}).All(&results); err != nil {
 		log.Print("Failed to write results: ", err)
 	}
 	return results
 }
 
-func (u UserRepository) InsertUser(user User) bool {
+func (u UserRepository) InsertUser(user User) (User, error){
 
 	c := config.OpenSession(docname)
 
-	if err := c.Insert(user); err != nil {
-		log.Fatal("Failed to add user: ", err)
-		return false
+	if err := c.Insert(user ,user); err != nil {
+		return user, err
 	}
 
-	return true
+	return user, nil
 
 }
