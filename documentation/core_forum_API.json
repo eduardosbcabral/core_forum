@@ -1,0 +1,766 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This forum is a place where anyone can participate to discuss and debate about all sort of things. A user can create a thread where others users can comment on it. The threads are divided by categories.",
+    "version": "1.0.0",
+    "title": "Core - Forum",
+    "termsOfService": "http://forum.core.com.br/terms/",
+    "contact": {
+      "email": "eduardosbcabral@gmail.com"
+    },
+    "license": {
+      "name": "Django",
+      "url": "https://www.djangoproject.com/m/foundation/icla.pdf"
+    }
+  },
+  "host": "forum.core.com.br",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Operations about users"
+    },
+    {
+      "name": "thread",
+      "description": "Operations about thread"
+    },
+    {
+      "name": "category",
+      "description": "Operations about category"
+    },
+    {
+      "name": "post",
+      "description": "Operations about post"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/thread": {
+      "get": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "Return a list of threads of all categories",
+        "operationId": "readAllThreads",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON array of all threads",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Thread"
+              }
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions"
+          }
+        }
+      }
+    },
+    "/{categoryId}/thread": {
+      "get": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "Return all threads by category",
+        "operationId": "readAllThreadsByCategories",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of category",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON array of all users by category",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "Create thread in category",
+        "operationId": "createThreadByCategory",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of category",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "thread created"
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to create this thread"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    },
+    "/{categoryId}/thread/{threadId}": {
+      "get": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "show thread to view",
+        "operationId": "showThread",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of the category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "threadId",
+            "description": "The id of the thread",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "found thread",
+            "schema": {
+              "$ref": "#/definitions/Thread"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to get this thread"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "Update an existing thread",
+        "operationId": "updateThread",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of the category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "threadId",
+            "description": "The id of the thread",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "thread successfully updated",
+            "schema": {
+              "$ref": "#/definitions/Thread"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to update this thread"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "Inactivate an existing thread",
+        "operationId": "deleteThread",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of the category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "threadId",
+            "description": "The id of the thread",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "thread successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/Thread"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to delete this thread"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    },
+    "/{categoryId}/thread/new": {
+      "get": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "Show create thread form",
+        "operationId": "showThreadForm",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of category",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "show create thread form requisition"
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions"
+          }
+        }
+      }
+    },
+    "/{categoryId}/thread/{threadId}/edit": {
+      "get": {
+        "tags": [
+          "thread"
+        ],
+        "summary": "show thread form to edit",
+        "operationId": "editThread",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "description": "The id of the category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "threadId",
+            "description": "The id of the thread",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "show edit thread form",
+            "schema": {
+              "$ref": "#/definitions/Thread"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to edit this thread"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Return a list of all users",
+        "operationId": "readAllUser",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON array of all users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "User sign up",
+        "operationId": "createUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "The user for sign in",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user created"
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to sign up this user"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    },
+    "/user/new": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Show create user form",
+        "operationId": "showUserForm",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "show create user form requisition"
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "User sign in",
+        "operationId": "loginUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "username to login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "password to login",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessfully signed in",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to sign in with this user"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    },
+    "/user/{username}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Show user to view",
+        "description": "The ID of user is on query string",
+        "operationId": "showUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "username to show user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "found user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "invalid id supplied"
+          },
+          "401": {
+            "description": "not enough permissions to view this user"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update an existing user",
+        "description": "The ID of user is on query string",
+        "operationId": "updateUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "username to update",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user successfully updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to update this user"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Inactivate an existing user",
+        "description": "The ID of user is on query string",
+        "operationId": "deleteUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "username to inactivate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to delete this user"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    },
+    "/user/{username}/edit/": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Show edit user form to update",
+        "description": "The ID of user is on query string",
+        "operationId": "editUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "username to show edit user form",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "show edit user form"
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions to view this edit user form"
+          },
+          "500": {
+            "description": "error occurred on the server"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Thread": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "format": "varchar (1000)"
+        },
+        "content": {
+          "type": "string",
+          "format": "ntext"
+        },
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Post"
+          }
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
+        }
+      },
+      "required": [
+        "title",
+        "content",
+        "date",
+        "user",
+        "category"
+      ]
+    },
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "content": {
+          "type": "string",
+          "format": "ntext"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "thread": {
+          "$ref": "#/definitions/Thread"
+        }
+      },
+      "required": [
+        "content",
+        "date",
+        "user",
+        "thread"
+      ]
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "category": {
+          "type": "string",
+          "format": "varchar(500)"
+        }
+      },
+      "required": [
+        "category"
+      ]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "primary key"
+        },
+        "image": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Gender"
+          }
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "format": "password"
+        }
+      },
+      "required": [
+        "username",
+        "gender",
+        "email",
+        "password"
+      ]
+    },
+    "Gender": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "integer64"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "description"
+      ]
+    }
+  }
+}
