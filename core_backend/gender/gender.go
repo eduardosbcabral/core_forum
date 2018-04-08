@@ -1,6 +1,12 @@
 package gender
 
+import (
+	"gopkg.in/mgo.v2/bson"
+)
+
 type Gender struct {
-	Id			int64	`json:"id"`
-	Category 	string	`json:"category" validate:"required"`
+	Id				bson.ObjectId	`json:"_id" bson:"_id"`
+	Description 	string			`json:"description" validate:"required"`
 }
+
+type Genders []Gender

@@ -21,6 +21,30 @@ func CreateUserRoutes() config.Routes {
 			"/user",
 			controller.Create,
 		},
+		config.Route{
+			"Show - User",
+			"GET",
+			"/user/{username}",
+			controller.Show,
+		},
+		config.Route{
+			"Login - User",
+			"POST",
+			"/login",
+			controller.Login,
+		},
+		config.Route{
+			"Update - User",
+			"PUT",
+			"/user/{username}",
+			controller.Update,
+		},
+		config.Route{
+			"Destroy - User",
+			"DELETE",
+			"/user/{username}",
+			controller.Destroy,
+		},
 	}
 
 	return routes

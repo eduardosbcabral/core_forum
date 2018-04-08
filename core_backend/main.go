@@ -4,10 +4,14 @@ import(
 	"fmt"
 	"net/http"
 	"log"
+
+	"core_backend/config"
 )
 
 func main() {
 	log.Print("[DEBUG] Starting Server...")
+
+	config.ConnectToDatabase()
 
 	CreateAllRoutes()
 	router := Routes
