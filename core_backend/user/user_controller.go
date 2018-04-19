@@ -14,7 +14,6 @@ type UserController struct {
 
 func (c *UserController) Index(w http.ResponseWriter, r *http.Request) {
 	users := c.UserRepository.GetUsers()
-
 	respondWithJson(w, http.StatusOK, users)
 }
 

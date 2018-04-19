@@ -3,7 +3,6 @@ package gender
 import (
 	"core_backend/config"
 	"log"
-
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -20,6 +19,7 @@ func (u GenderRepository) GetGenders() Genders {
 	if err := c.Find(bson.M{}).All(&results); err != nil {
 		log.Print("Failed to write results: ", err)
 	}
+
 	return results
 }
 

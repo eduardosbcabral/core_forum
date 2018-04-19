@@ -6,6 +6,8 @@ import(
 	"log"
 
 	"core_backend/config"
+	"github.com/gorilla/handlers"
+
 )
 
 func main() {
@@ -16,7 +18,10 @@ func main() {
 	CreateAllRoutes()
 	router := Routes
 
-	if err := http.ListenAndServe("localhost:8080", router); err != nil {
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) 
+ 	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
+
+	if err := http.ListenAndServe("localhost:8080", handlers.CORS(allowedOrigins, allowedMethods)(router)); err != nil {
 		fmt.Println("[ERROR] can't stablish server: ", err.Error())
 	}
 }

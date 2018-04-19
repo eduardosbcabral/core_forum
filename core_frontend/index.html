@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html ng-app="core">
+	<head>
+		<title></title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="/bower_components/materialize/dist/css/materialize.min.css">
+		<style media="screen" type="text/css">
+		@import "/assets/css/custom.css" 
+		</style>
+		<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+		<!-- Jquery -->
+		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+
+
+		<!-- AngularJS main scripts -->
+		<script src="/bower_components/angular/angular.js"></script>
+		<script src="/bower_components/angular-route/angular-route.js"></script>
+		<script src="/bower_components/materialize/dist/js/materialize.min.js"></script>
+   		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-materialize/0.2.2/angular-materialize.min.js"></script>
+
+		<!-- App config scripts -->
+		<script src="/app/app.module.js"></script>
+		<script src="/app/app-routes.js"></script>
+		<script src="/app/app-config.service.js"></script>
+
+		<!-- Services -->
+		<script src="/app/user/user.service.js"></script>		
+
+		<!-- Controllers -->
+		<script src="/app/user/user.controller.js"></script>
+		<script src="/app/navigation/navigation.controller.js"></script>
+
+		
+		<base href="/">
+	</head>
+	<body>
+		<div ng-controller="navigationController as vm">
+			<div ng-include="'/app/navigation/navigation.html'"></div>
+		</div>	
+	</body>
+</html>

@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <div class="col s12">
+      <ul tabs class="tabs z-depth-1">
+        <li class="tab col s6" ng-click="vm.currentTab = 'User'"><a class="active light-blue-text text-darken-3" href="">Users <span class="badge" style="float:none">{{ vm.users.length }}</span></a></li>
+        <li class="tab col s6" ng-click="vm.currentTab = 'Gender'"><a href="" class="light-blue-text text-darken-3">Genders <span class="badge" style="float:none;">{{ vm.genders.length }}</span></a></li>
+      </ul>
+    </div>
+    <div ng-show="vm.currentTab=='User'" class="col s12">
+      <table class="highlight centered responsive white z-depth-1">
+          <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Password</th>
+            </tr>
+          </thead>
+          <tbody ng-repeat="user in vm.users">
+            <tr>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.password }}</td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+    <div ng-show="vm.currentTab=='Gender'" class="col s12">
+       <table class="highlight centered responsive white z-depth-1">
+          <thead>
+            <tr>
+                <th>Id</th>
+                <th>Description</th>
+            </tr>
+          </thead>
+          <tbody ng-repeat="gender in vm.genders">
+            <tr>
+              <td>{{ gender._id }}</td>
+              <td>{{ gender.description }}</td>
+            </tr>
+          </tbody>
+       </table>
+    </div>
+  </div>
+</div>
+
+<div class="fixed-action-btn">
+  <a class="btn-floating btn-large blue darken-4">
+    <i class="large material-icons">mode_edit</i>
+  </a>
+  <ul>
+    <li><a class="btn-floating green"><i class="material-icons">add</i></a></li>
+    <li><a class="btn-floating red"><i class="material-icons">remove</i></a></li>
+  </ul>
+</div>

@@ -17,10 +17,11 @@ func (u UserRepository) GetUsers() Users {
 	c := config.OpenSession(docname)
 
 	results := Users{}
-
+	log.Print('ASDADAS')
 	if err := c.Find(bson.M{}).All(&results); err != nil {
 		log.Print("Failed to write results: ", err)
 	}
+	log.Print(results)
 	return results
 }
 
