@@ -5,11 +5,12 @@ import (
 )
 
 type User struct {
-	Username 	string			`json:"username" validate:"required"` // Username will be the 'ID'. Can't exists two users with the same username
-	Email		string			`json:"emaily" validate:"required, email"`
+	Username 	string			`json:"username" validate:"required"`
+	Email		string			`json:"email" validate:"required, email"`
 	Image		string			`json:"image" validate:"url"`
 	Password	string			`json:"password" validate:"required"`
 	Gender 		gender.Gender	`json:"gender" validate:"required"`
+	Active		bool			`json:"active"`
 }
 
 type Users []User

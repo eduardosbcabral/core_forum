@@ -12,20 +12,35 @@ const docname = "users"
 
 type UserRepository struct{}
 
-func (u UserRepository) GetUsers() Users {
+func (ur UserRepository) GetUsers() (results Users, err error) {
 
 	c := config.OpenSession(docname)
 
-	results := Users{}
-	log.Print('ASDADAS')
-	if err := c.Find(bson.M{}).All(&results); err != nil {
+	results = Users{}
+
+	if err = c.Find(bson.M{"active": true}).All(&results); err != nil {
 		log.Print("Failed to write results: ", err)
+		return
 	}
-	log.Print(results)
-	return results
+	
+	return
 }
 
-func (u UserRepository) InsertUser(user User) (User, error) {
+func (ur UserRepository) GetAllUsers() (results Users, err error) {
+
+	c := config.OpenSession(docname)
+
+	results = Users{}
+
+	if err = c.Find(bson.M{}).All(&results); err != nil {
+		log.Print("Failed to write results: ", err)
+		return
+	}
+	
+	return
+}
+
+func (ur UserRepository) InsertUser(user User) (User, error) {
 
 	c := config.OpenSession(docname)
 
@@ -40,21 +55,21 @@ func (u UserRepository) InsertUser(user User) (User, error) {
 
 }
 
-func (u UserRepository) GetUser(username string) (User, error) {
+func (ur UserRepository) GetUser(username string) (result User, err error) {
 	c := config.OpenSession(docname)
 	
 	username = strings.ToLower(username)
 
-	result := User{}
+	result = User{}
 
-	if err := c.Find(bson.M{"username": username}).One(&result); err != nil {
+	if err = c.Find(bson.M{"username": username}).One(&result); err != nil {
 		return result, err
 	}
 
 	return result, nil
 }
 
-func (u UserRepository) Login(user User) (bool, error) {
+func (ur UserRepository) Login(user User) (bool, error) {
 	c := config.OpenSession(docname)
 
 	if err := c.Find(bson.M{"username": user.Username, "password": user.Password}).One(&User{}); err != nil {
@@ -65,7 +80,7 @@ func (u UserRepository) Login(user User) (bool, error) {
 
 }
 
-func (u UserRepository) UpdateUser(username string, user User) (User, error) {
+func (ur UserRepository) UpdateUser(username string, user User) (User, error) {
 	c := config.OpenSession(docname)
 
 	user.Username = strings.ToLower(user.Username)
@@ -78,10 +93,12 @@ func (u UserRepository) UpdateUser(username string, user User) (User, error) {
 	return user, nil
 }
 
-func (u UserRepository) DeleteUser(username string) (bool, error) {
+func (ur UserRepository) DeleteUser(username string, user User) (bool, error) {
 	c := config.OpenSession(docname)
 
-	if err := c.Remove(bson.M{"username": username}); err != nil {
+	user.Active = false
+
+	if err := c.Update(bson.M{"username": username}, user); err != nil {
 		return false, err
 	}
 

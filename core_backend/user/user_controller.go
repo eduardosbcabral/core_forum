@@ -1,67 +1,77 @@
 package user
 
 import (
-	"encoding/json"
 	"net/http"
 	"log"
 
 	"github.com/gorilla/mux"
+
+	"core_backend/config"
 )
 
 type UserController struct {
 	UserRepository UserRepository
 }
 
-func (c *UserController) Index(w http.ResponseWriter, r *http.Request) {
-	users := c.UserRepository.GetUsers()
-	respondWithJson(w, http.StatusOK, users)
+func (uu *UserController) Index(w http.ResponseWriter, r *http.Request) {
+	users, err := uu.UserRepository.GetUsers()
+
+	if err != nil {
+		log.Print("[ERROR] cant find users")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	config.RespondWithJson(w, http.StatusOK, users)
 }
 
-func (c *UserController) Create(w http.ResponseWriter, r *http.Request) {
-	body := r.Body
-
+func (uu *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	var u User
 
-	err := json.NewDecoder(body).Decode(&u)
-
+	err := config.DecodeJson(r.Body, &u)
+	
 	if err != nil {
-		log.Print("[ERROR] wrong JSON")
+		log.Print("[ERROR] Wrong JSON")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	user, err := c.UserRepository.InsertUser(u)
+	user, err := uu.UserRepository.InsertUser(u)
 
 	if err != nil {
+		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	respondWithJson(w, http.StatusCreated, user)
+	config.RespondWithJson(w, http.StatusCreated, user)
 }
 
-func (c *UserController) Show(w http.ResponseWriter, r *http.Request) {
+func (uu *UserController) Show(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
 
-	user, err := c.UserRepository.GetUser(username)
+	user, err := uu.UserRepository.GetUser(username)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	respondWithJson(w, http.StatusOK, user)
+	config.RespondWithJson(w, http.StatusOK, user)
 }
 
-func (c *UserController) Login(w http.ResponseWriter, r *http.Request) {
-
-	body := r.Body
-
+func (uu *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	var u User
 
-	err := json.NewDecoder(body).Decode(&u)
+	err := config.DecodeJson(r.Body, &u)
 
-	_, err = c.UserRepository.Login(u)
+	if err != nil {
+		log.Print("[ERROR] Wrong JSON")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	_, err = uu.UserRepository.Login(u)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -72,15 +82,20 @@ func (c *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("LOGADO"))
 }
 
-func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	body := r.Body
+func (uu *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
 
 	var u User
 
-	err := json.NewDecoder(body).Decode(&u)
+	err := config.DecodeJson(r.Body, &u)
 
-	user, err := c.UserRepository.UpdateUser(username, u)
+	if err != nil {
+		log.Print("[ERROR] Wrong JSON")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	user, err := uu.UserRepository.UpdateUser(username, u)
 
 	if err != nil {
 		log.Print("[ERROR] cant find or update user")
@@ -88,13 +103,23 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJson(w, http.StatusOK, user)
+	config.RespondWithJson(w, http.StatusOK, user)
 }
 
-func (c *UserController) Destroy(w http.ResponseWriter, r *http.Request) {
+func (uu *UserController) Destroy(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
 
-	_, err := c.UserRepository.DeleteUser(username)
+	var u User
+
+	err := config.DecodeJson(r.Body, &u)
+
+	if err != nil {
+		log.Print("[ERROR] Wrong JSON")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, err = uu.UserRepository.DeleteUser(username, u)
 
 	if err != nil {
 		log.Print("[ERROR] cant delete user")
@@ -102,10 +127,4 @@ func (c *UserController) Destroy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("USUARIO DESTRUIDO"))
-}
-
-func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(payload)
 }

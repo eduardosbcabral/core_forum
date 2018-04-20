@@ -1,9 +1,10 @@
 package gender
 
 import (
-	"encoding/json"
 	"net/http"
 	"log"
+
+	"core_backend/config"
 
 	"github.com/gorilla/mux"
 )
@@ -12,63 +13,66 @@ type GenderController struct {
 	GenderRepository GenderRepository
 }
 
-func (c *GenderController) Index(w http.ResponseWriter, r *http.Request) {
-	genders := c.GenderRepository.GetGenders()
+func (gc *GenderController) Index(w http.ResponseWriter, r *http.Request) {
+	genders, err := gc.GenderRepository.GetGenders()
 
-	respondWithJson(w, http.StatusOK, genders)
+	if err != nil {
+		log.Print("[ERROR] cant find genders")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	config.RespondWithJson(w, http.StatusOK, genders)
 }
 
-func (c *GenderController) Create(w http.ResponseWriter, r *http.Request) {
-	body := r.Body
+func (gc *GenderController) Create(w http.ResponseWriter, r *http.Request) {
+	var g Gender
+
+	err := config.DecodeJson(r.Body, &g)
+
+	if err != nil {
+		log.Print("[ERROR] Wrong JSON")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	gender, err := gc.GenderRepository.InsertGender(g)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	config.RespondWithJson(w, http.StatusCreated, gender)
+}
+
+func (gc *GenderController) Show(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	gender, err := gc.GenderRepository.GetGender(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	config.RespondWithJson(w, http.StatusOK, gender)
+}
+
+func (gc *GenderController) Update(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
 
 	var g Gender
 
-	err := json.NewDecoder(body).Decode(&g)
+	err := config.DecodeJson(r.Body, &g)
 
 	if err != nil {
-		log.Print("[ERROR] wrong JSON")
+		log.Print("[ERROR] Wrong JSON")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	gender, err := c.GenderRepository.InsertGender(g)
-
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	respondWithJson(w, http.StatusCreated, gender)
-}
-
-func (c *GenderController) Show(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	gender, err := c.GenderRepository.GetGender(id)
-
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	respondWithJson(w, http.StatusOK, gender)
-}
-
-func (c *GenderController) Update(w http.ResponseWriter, r *http.Request) {
-	body := r.Body
-	id := mux.Vars(r)["id"]
-
-	var g Gender
-
-	err := json.NewDecoder(body).Decode(&g)
-
-	if err != nil {
-		log.Print("[ERROR] wrong JSON")
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	gender, err := c.GenderRepository.UpdateGender(id, g)
+	
+	gender, err := gc.GenderRepository.UpdateGender(id, g)
 
 	if err != nil {
 		log.Print("[ERROR] cant find or update gender: ", err)
@@ -76,13 +80,17 @@ func (c *GenderController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJson(w, http.StatusOK, gender)
+	config.RespondWithJson(w, http.StatusOK, gender)
 }
 
-func (c *GenderController) Destroy(w http.ResponseWriter, r *http.Request) {
+func (gc *GenderController) Destroy(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	_, err := c.GenderRepository.DeleteGender(id)
+	var g Gender
+
+	err := config.DecodeJson(r.Body, &g)	
+
+	_, err = gc.GenderRepository.DeleteGender(id, g)
 
 	if err != nil {
 		log.Print("[ERROR] cant delete gender")
@@ -90,10 +98,4 @@ func (c *GenderController) Destroy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("GENERO DESTRUIDO"))
-}
-
-func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(payload)
 }

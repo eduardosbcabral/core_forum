@@ -5,19 +5,18 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-const server = "localhost:27017"
-
-const dbName = "core_db"
-
 var database *mgo.Database
 
-func ConnectToDatabase() {
-	session, err := mgo.Dial(server)
+func ConnectToDatabase() (err error) {
+	session, err := mgo.Dial(MONGO_HOST)
 	if err != nil {
 		log.Print("Failed to establish connection to MongoDB Server: ", err)
+		return
 	}
 
-	database = session.DB(dbName)
+	database = session.DB(DATABASE_NAME)
+
+	return
 }
 
 func OpenSession(docName string) *mgo.Collection {
