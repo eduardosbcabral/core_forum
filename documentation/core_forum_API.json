@@ -1297,6 +1297,51 @@
             "description": "not enough permissions"
           }
         }
+      }
+    },
+    "/{categoryId}/thread/{threadId}/post": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Return a list of all posts of the thread",
+        "operationId": "readAllPostsOfThread",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON array of all posts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Post"
+              }
+            }
+          },
+          "400": {
+            "description": "error ocurred during requisition"
+          },
+          "401": {
+            "description": "not enough permissions"
+          }
+        }
       },
       "post": {
         "tags": [
@@ -1308,6 +1353,20 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "post",
@@ -1357,7 +1416,7 @@
         }
       }
     },
-    "/post/new": {
+    "/{categoryId}/thread/{threadId}/post/new": {
       "get": {
         "tags": [
           "post"
@@ -1366,6 +1425,22 @@
         "operationId": "showPostForm",
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -1380,7 +1455,7 @@
         }
       }
     },
-    "/post/{postId}": {
+    "/{categoryId}/thread/{threadId}/post/{postId}": {
       "get": {
         "tags": [
           "post"
@@ -1392,6 +1467,20 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "postId",
             "in": "path",
@@ -1429,6 +1518,20 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "postId",
             "in": "path",
@@ -1475,6 +1578,20 @@
         ],
         "parameters": [
           {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "postId",
             "in": "path",
             "description": "id of post",
@@ -1507,7 +1624,7 @@
         }
       }
     },
-    "/post/{postId}/edit/": {
+    "/{categoryId}/thread/{threadId}/post/edit/": {
       "get": {
         "tags": [
           "post"
@@ -1519,6 +1636,20 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "id of category",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "id of thread",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "postId",
             "in": "path",
