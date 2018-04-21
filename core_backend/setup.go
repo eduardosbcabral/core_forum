@@ -8,7 +8,7 @@ import(
 	"core_backend/user"
 	"core_backend/gender"
 	"core_backend/category"
-
+	"core_backend/thread"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
@@ -16,6 +16,7 @@ import(
 
 func StartServer() {
 	config.ConnectToDatabase()
+	config.StartValidator()
 
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) 
  	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
@@ -32,8 +33,10 @@ func CreateAllRoutes() (routes *mux.Router){
 	userRoutes := user.CreateUserRoutes()
 	genderRoutes := gender.CreateGenderRoutes()
 	categoryRoutes := category.CreateCategoryRoutes()
+	threadRoutes := thread.CreateThreadRoutes()
 	appRoutes := append(userRoutes, genderRoutes ...)
 	appRoutes = append(appRoutes, categoryRoutes ...)
+	appRoutes = append(appRoutes, threadRoutes ...)
 
 	routes = config.NewRouter(appRoutes)
 

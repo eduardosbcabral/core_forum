@@ -2,7 +2,6 @@ package gender
 
 import (
 	"net/http"
-	"log"
 
 	"core_backend/config"
 
@@ -16,9 +15,19 @@ type GenderController struct {
 func (gc *GenderController) Index(w http.ResponseWriter, r *http.Request) {
 	genders, err := gc.GenderRepository.GetGenders()
 
-	if err != nil {
-		log.Print("[ERROR] cant find genders")
-		w.WriteHeader(http.StatusBadRequest)
+	if err != nil {		
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return genders.")
+		return
+	}
+
+	config.RespondWithJson(w, http.StatusOK, genders)
+}
+
+func (gc *GenderController) IndexAll(w http.ResponseWriter, r *http.Request) {
+	genders, err := gc.GenderRepository.GetAllGenders()
+
+	if err != nil {		
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return genders.")
 		return
 	}
 
@@ -31,15 +40,21 @@ func (gc *GenderController) Create(w http.ResponseWriter, r *http.Request) {
 	err := config.DecodeJson(r.Body, &g)
 
 	if err != nil {
-		log.Print("[ERROR] Wrong JSON")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
+	}
+
+	err = config.Validate.Struct(g)
+
+	if err != nil {
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
+		return	
 	}
 
 	gender, err := gc.GenderRepository.InsertGender(g)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't insert gender.")
 		return
 	}
 
@@ -52,7 +67,7 @@ func (gc *GenderController) Show(w http.ResponseWriter, r *http.Request) {
 	gender, err := gc.GenderRepository.GetGender(id)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't find gender.")
 		return
 	}
 
@@ -67,16 +82,21 @@ func (gc *GenderController) Update(w http.ResponseWriter, r *http.Request) {
 	err := config.DecodeJson(r.Body, &g)
 
 	if err != nil {
-		log.Print("[ERROR] Wrong JSON")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
+	}
+
+	err = config.Validate.Struct(g)
+
+	if err != nil {
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
+		return	
 	}
 	
 	gender, err := gc.GenderRepository.UpdateGender(id, g)
 
 	if err != nil {
-		log.Print("[ERROR] cant find or update gender: ", err)
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't update gender.")
 		return
 	}
 
@@ -86,16 +106,21 @@ func (gc *GenderController) Update(w http.ResponseWriter, r *http.Request) {
 func (gc *GenderController) Destroy(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	var g Gender
+	var ds config.DesactivateStruct
 
-	err := config.DecodeJson(r.Body, &g)	
-
-	_, err = gc.GenderRepository.DeleteGender(id, g)
+	err := config.DecodeJson(r.Body, &ds)	
 
 	if err != nil {
-		log.Print("[ERROR] cant delete gender")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+		return
 	}
 
-	w.Write([]byte("GENERO DESTRUIDO"))
+	_, err = gc.GenderRepository.DeleteGender(id, ds)
+
+	if err != nil {
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't delete gender.")
+		return
+	}
+
+	config.RespondWithMessage(w, http.StatusOK, "Gender successfully deleted.")	
 }

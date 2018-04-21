@@ -2,7 +2,6 @@ package category
 
 import (
 	"net/http"
-	"log"
 
 	"core_backend/config"
 
@@ -17,8 +16,18 @@ func (cc *CategoryController) Index(w http.ResponseWriter, r *http.Request) {
 	categories, err := cc.CategoryRepository.GetCategories()
 
 	if err != nil {
-		log.Print("[ERROR] cant find categories")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return categories.")
+		return
+	}
+
+	config.RespondWithJson(w, http.StatusOK, categories)
+}
+
+func (cc *CategoryController) IndexAll(w http.ResponseWriter, r *http.Request) {
+	categories, err := cc.CategoryRepository.GetAllCategories()
+
+	if err != nil {
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return categories.")
 		return
 	}
 
@@ -31,15 +40,21 @@ func (cc *CategoryController) Create(w http.ResponseWriter, r *http.Request) {
 	err := config.DecodeJson(r.Body, &c)
 
 	if err != nil {
-		log.Print("[ERROR] Wrong JSON")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
+	}
+
+	err = config.Validate.Struct(c)
+
+	if err != nil {
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
+		return	
 	}
 
 	category, err := cc.CategoryRepository.InsertCategory(c)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't insert category.")
 		return
 	}
 
@@ -52,7 +67,7 @@ func (cc *CategoryController) Show(w http.ResponseWriter, r *http.Request) {
 	category, err := cc.CategoryRepository.GetCategory(id)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't find category.")
 		return
 	}
 
@@ -67,16 +82,21 @@ func (cc *CategoryController) Update(w http.ResponseWriter, r *http.Request) {
 	err := config.DecodeJson(r.Body, &c)
 
 	if err != nil {
-		log.Print("[ERROR] Wrong JSON")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
+	}
+
+	err = config.Validate.Struct(c)
+
+	if err != nil {
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
+		return	
 	}
 	
 	category, err := cc.CategoryRepository.UpdateCategory(id, c)
 
 	if err != nil {
-		log.Print("[ERROR] cant find or update category: ", err)
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't update category.")
 		return
 	}
 
@@ -86,22 +106,21 @@ func (cc *CategoryController) Update(w http.ResponseWriter, r *http.Request) {
 func (cc *CategoryController) Destroy(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	var c Category
+	var ds config.DesactivateStruct
 
-	err := config.DecodeJson(r.Body, &c)	
+	err := config.DecodeJson(r.Body, &ds)	
 
 	if err != nil {
-		log.Print("[ERROR] Wrong JSON")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
 	}
 
-	_, err = cc.CategoryRepository.DeleteCategory(id, c)
+	_, err = cc.CategoryRepository.DeleteCategory(id, ds)
 
 	if err != nil {
-		log.Print("[ERROR] cant delete category")
-		w.WriteHeader(http.StatusBadRequest)
+		config.RespondWithMessage(w, http.StatusBadRequest, "Can't delete category.")
+		return
 	}
 
-	w.Write([]byte("CATEGORIA DESTRUIDA"))
+	config.RespondWithMessage(w, http.StatusOK, "Category successfully deleted.")
 }

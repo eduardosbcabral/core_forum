@@ -18,7 +18,7 @@ func (gr GenderRepository) GetGenders() (results Genders, err error) {
 	results = Genders{}
 
 	if err = c.Find(bson.M{"active": true}).All(&results); err != nil {
-		log.Print("Failed to write results: ", err)
+		log.Print("[ERROR] failed to get genders: ", err)
 		return
 	}
 
@@ -32,7 +32,7 @@ func (gr GenderRepository) GetAllGenders() (results Genders, err error) {
 	results = Genders{}
 
 	if err = c.Find(bson.M{}).All(&results); err != nil {
-		log.Print("Failed to write results: ", err)
+		log.Print("[ERROR] failed to get genders: ", err)
 		return
 	}
 
@@ -47,6 +47,7 @@ func (gr GenderRepository) InsertGender(gender Gender) (Gender, error) {
 	gender.Active = true
 
 	if err := c.Insert(gender); err != nil {
+		log.Print("[ERROR] failed to insert gender: ", err)
 		return gender, err
  	}
 
@@ -59,7 +60,8 @@ func (gr GenderRepository) GetGender(id string) (result Gender, err error) {
 	
 	result = Gender{}
 
-	if err = c.FindId(bson.ObjectIdHex(id)).One(&result); err != nil {
+	if err = c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&result); err != nil {
+		log.Print("[ERROR] failed to get gender: ", err)
 		return
 	}
 
@@ -72,18 +74,18 @@ func (gr GenderRepository) UpdateGender(id string, gender Gender) (Gender, error
 	gender.Id = bson.ObjectIdHex(id)
 
 	if err := c.UpdateId(bson.ObjectIdHex(id), gender); err != nil {
+		log.Print("[ERROR] failed to update gender: ", err)
 		return gender, err
 	} 
 
 	return gender, nil
 }
 
-func (gr GenderRepository) DeleteGender(id string, gender Gender) (bool, error) {
+func (gr GenderRepository) DeleteGender(id string, entity config.DesactivateStruct) (bool, error) {
 	c := config.OpenSession(docname)
 
-	gender.Active = false
-
-	if err := c.UpdateId(bson.ObjectIdHex(id), gender); err != nil {
+	if err := c.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{"active": entity.Active}}); err != nil {
+		log.Print("[ERROR] failed to activate or desactivate gender: ", err)
 		return false, err
 	}
 

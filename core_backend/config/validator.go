@@ -4,8 +4,8 @@ import(
 	"gopkg.in/go-playground/validator.v9"
 )
 
-var validate *validator.Validate
+var Validate *validator.Validate
 
 func StartValidator() {
-	validate = validator.New()
+	Validate = validator.New()
 }

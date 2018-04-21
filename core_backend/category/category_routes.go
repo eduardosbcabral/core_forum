@@ -39,6 +39,12 @@ func CreateCategoryRoutes() config.Routes {
 			"/category/{id}",
 			controller.Destroy,
 		},
+		config.Route{
+			"Index(All) - Category",
+			"GET",
+			"/categoryAll",
+			controller.IndexAll,
+		},
 	}
 
 	return routes

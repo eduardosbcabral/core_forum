@@ -18,7 +18,7 @@ func (cr CategoryRepository) GetCategories() (results Categories, err error) {
 	results = Categories{}
 
 	if err = c.Find(bson.M{"active": true}).All(&results); err != nil {
-		log.Print("Failed to write results: ", err)
+		log.Print("[ERROR] failed to get categories: ", err)
 		return
 	}
 
@@ -32,7 +32,7 @@ func (cr CategoryRepository) GetAllCategories() (result Categories, err error) {
 	results := Categories{}
 
 	if err = c.Find(bson.M{}).All(&results); err != nil {
-		log.Print("Failed to write results: ", err)
+		log.Print("[ERROR] failed to get categories: ", err)
 		return
 	}
 
@@ -47,6 +47,7 @@ func (cr CategoryRepository) InsertCategory(category Category) (Category, error)
 	category.Active = true
 
 	if err := c.Insert(category); err != nil {
+		log.Print("[ERROR] failed to insert category: ", err)
 		return category, err
 	}
 
@@ -58,7 +59,8 @@ func (cr CategoryRepository) GetCategory(id string) (result Category, err error)
 	
 	result = Category{}
 
-	if err = c.FindId(bson.ObjectIdHex(id)).One(&result); err != nil {
+	if err = c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&result); err != nil {
+		log.Print("[ERROR] failed to get category: ", err)
 		return
 	}
 
@@ -71,18 +73,18 @@ func (cr CategoryRepository) UpdateCategory(id string, category Category) (Categ
 	category.Id = bson.ObjectIdHex(id)
 
 	if err := c.UpdateId(bson.ObjectIdHex(id), category); err != nil {
+		log.Print("[ERROR] failed to update category: ", err)
 		return category, err
 	} 
 
 	return category, nil
 }
 
-func (cr CategoryRepository) DeleteCategory(id string, category Category) (bool, error) {
+func (cr CategoryRepository) DeleteCategory(id string, entity config.DesactivateStruct) (bool, error) {
 	c := config.OpenSession(docname)
 
-	category.Active = false
-
-	if err := c.UpdateId(bson.ObjectIdHex(id), category); err != nil {
+	if err := c.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{"active": entity.Active}}); err != nil {
+		log.Print("[ERROR] failed to activate or desactivate category: ", err)
 		return false, err
 	}
 

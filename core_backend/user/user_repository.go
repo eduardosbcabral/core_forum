@@ -19,7 +19,7 @@ func (ur UserRepository) GetUsers() (results Users, err error) {
 	results = Users{}
 
 	if err = c.Find(bson.M{"active": true}).All(&results); err != nil {
-		log.Print("Failed to write results: ", err)
+		log.Print("[ERROR] failed to get users: ", err)
 		return
 	}
 	
@@ -33,7 +33,7 @@ func (ur UserRepository) GetAllUsers() (results Users, err error) {
 	results = Users{}
 
 	if err = c.Find(bson.M{}).All(&results); err != nil {
-		log.Print("Failed to write results: ", err)
+		log.Print("[ERROR] failed to get categories: ", err)
 		return
 	}
 	
@@ -46,8 +46,10 @@ func (ur UserRepository) InsertUser(user User) (User, error) {
 
 	user.Username = strings.ToLower(user.Username)
 	user.Email = strings.ToLower(user.Email)
+	user.Active = true
 
 	if err := c.Insert(user); err != nil {
+		log.Print("[ERROR] failed to insert user: ", err)
 		return user, err
 	}
 
@@ -63,16 +65,18 @@ func (ur UserRepository) GetUser(username string) (result User, err error) {
 	result = User{}
 
 	if err = c.Find(bson.M{"username": username}).One(&result); err != nil {
-		return result, err
+		log.Print("[ERROR] failed to get user: ", err)
+		return
 	}
 
-	return result, nil
+	return
 }
 
-func (ur UserRepository) Login(user User) (bool, error) {
+func (ur UserRepository) Login(user UserLogin) (bool, error) {
 	c := config.OpenSession(docname)
 
 	if err := c.Find(bson.M{"username": user.Username, "password": user.Password}).One(&User{}); err != nil {
+		log.Print("[ERROR] failed to login: ", err)
 		return false, err
 	}
 
@@ -87,20 +91,21 @@ func (ur UserRepository) UpdateUser(username string, user User) (User, error) {
 	user.Email = strings.ToLower(user.Email)
 
 	if err := c.Update(bson.M{"username": username}, user); err != nil {
+		log.Print("[ERROR] failed to update user: ", err)
 		return user, err
 	} 
 
 	return user, nil
 }
 
-func (ur UserRepository) DeleteUser(username string, user User) (bool, error) {
+func (ur UserRepository) DeleteUser(username string, entity config.DesactivateStruct) (bool, error) {
 	c := config.OpenSession(docname)
 
-	user.Active = false
-
-	if err := c.Update(bson.M{"username": username}, user); err != nil {
+	if err := c.Update(bson.M{"username": username}, bson.M{"$set": bson.M{"active": entity.Active}}); err != nil {
+		log.Print("[ERROR] failed to delete user: ", err)
 		return false, err
 	}
+
 
 	return true, nil
 }

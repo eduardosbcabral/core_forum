@@ -45,6 +45,12 @@ func CreateUserRoutes() config.Routes {
 			"/user/{username}",
 			controller.Destroy,
 		},
+		config.Route{
+			"Index(All) - User",
+			"GET",
+			"/userAll",
+			controller.IndexAll,
+		},
 	}
 
 	return routes

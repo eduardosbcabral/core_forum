@@ -39,6 +39,12 @@ func CreateGenderRoutes() config.Routes {
 			"/gender/{id}",
 			controller.Destroy,
 		},
+		config.Route{
+			"Index(All) - Gender",
+			"GET",
+			"/genderAll",
+			controller.IndexAll,
+		},
 	}
 
 	return routes
