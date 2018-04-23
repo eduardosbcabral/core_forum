@@ -8,6 +8,7 @@ gulp.task('browser-sync', function() {
 		server: {
 			baseDir: './'
 		},
+		notify: false,
 		port: '1550',
 		injectChanges: true
 	});

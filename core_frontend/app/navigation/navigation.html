@@ -1,41 +1,59 @@
-<div ng-controller="navigationController">
-    <nav class="nav light-blue darken-3 z-depth-4">
-      <a href="/#/" class="brand-logo" style="padding: 10px;"><img src="assets/img/logo/logo-name.png" style="width:40%;"></img></a>
-      <div class="nav-wrapper">
-        <ul class="right hide-on-med-and-down">
-          <li><a href="#">Sign Up</a></li>
-          <li><a href="#">Sign In</a></li>
-        </ul>
-      </div>
-    </nav>
-    <div class="row">
-      <div class="col s2">
-        <ul id="slide-out" class="side-nav fixed z-depth-3" style="margin-top: 65px;">
-          <li>
-            <div class="user-view">
-              <div class="background grey lighten-4">
-                <img src="">
-              </div>
-              <a href="#!user"><img class="circle" src=""></a>
-              <a href="#!name"><span class="black-text name">John Doe</span></a>
-              <a href="#!email"><span class="black-text email">jdandturk@gmail.com</span></a>
-              <li><a class="dropdown-button waves-effect" href="" data-activates="dropdownUser">User Options<i class="material-icons right">arrow_drop_down</i></a></li>
-              <li><a class="subheader">Admin Options</a></li>
-              <li><a class="waves-effect" href="/#/user">All Users</a></li>
+<header id="header" class="page-topbar">
+      <div class="navbar-fixed">
+        <nav class="navbar-color gradient-45deg-light-blue-cyan">
+          <div class="nav-wrapper">
+            <ul class="left">
+              <li>
+                <h1 class="logo-wrapper">
+                  <a href="/#/" class="brand-logo darken-1">
+                    <!--<img src="" alt="core logo">-->
+                    Logo do forum
+                    <span class="logo-text hide-on-med-and-down">Core</span>
+                  </a>
+                </h1>
+              </li>
+            </ul>
+            <div class="header-search-wrapper hide-on-med-and-down">
+              <i class="material-icons">search</i>
+              <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="Explore Forum" />
             </div>
-          </li>
-          <ul id='dropdownUser' class='dropdown-content z-depth-3'>
-            <li><a href="/#/thread">Your Threads</a></li>
-            <li><a href="/#/post">Your Posts</a></li>
-            <li><a href="/#/user">Edit Profile</a></li>
-          </ul>
-        </ul>
-              <div class="col s10">
-        <div style="margin-top: 40px;" ng-view></div>
+            <ul class="right hide-on-med-and-down">
+              <li>
+                <a href="javascript:void(0);" class="waves-effect waves-block waves-light profile-button" data-activates="profile-dropdown">
+                  <span class="avatar-status avatar-online">
+                    <!--<img src="" alt="avatar">-->
+                    Imagem do usuário
+                    <i></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <!-- profile-dropdown -->
+            <ul id="profile-dropdown" class="dropdown-content">
+              <li>
+                <a href="/#/user" class="grey-text text-darken-1">
+                  <i class="material-icons">face</i> Profile</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#" class="grey-text text-darken-1">
+                  <i class="material-icons">keyboard_tab</i> Logout</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <!-- HORIZONTL NAV START-->
+        <nav id="horizontal-nav" class="white hide-on-med-and-down">
+          <div class="nav-wrapper">
+            <ul id="ul-horizontal-nav" class="left hide-on-med-and-down">
+              <li class="active">
+                <a class="dropdown-menu active" href="#!">
+                  <i class="material-icons">home</i>
+                  <span>Home Page</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
       </div>
-      </div>
-
-    </div>
-</div>
-
-
+    </header>

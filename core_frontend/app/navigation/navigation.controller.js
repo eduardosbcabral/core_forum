@@ -1,29 +1,21 @@
-app.controller('navigationController', function userController($scope, $location, $timeout) {
+app.controller('navigationController', function navigationController($scope, userService) {
 	var vm = this;
-	
-	//vm.getLoggedUser = getLoggedUser;
 
-	$timeout(init, 0);
+	vm.getLoggedUser = getLoggedUser;
 
-	/*function getLoggedUser() {
-		usuarioService.getLoggedUser('theduardds')
+	function getLoggedUser() {
+		userService.getLoggedUser('theduardds')
 		.then(function(obj) {
-			console.log(obj);
-			vm.user = obj.data;
+			$scope.user = obj.data;
 		})
 		.catch(function(obj) {
 			console.log(obj);
 		});
-	}*/
+	}
 	
 	function init() {
-		$('.dropdown-button').dropdown();
+		vm.getLoggedUser();
 	}
 
-
-	/*function main() {
-		vm.getLoggedUser();
-	}*/
-
-	//main();
+	init();
 });

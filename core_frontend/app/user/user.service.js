@@ -2,7 +2,8 @@ app.service('userService', function userService($http, configService) {
 
 	return {
 		getUsers: getUsers,
-		getGenders: getGenders
+		getGenders: getGenders,
+		getLoggedUser: getLoggedUser
 	};
 
 	function getUsers() {
@@ -19,9 +20,7 @@ app.service('userService', function userService($http, configService) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            url: configService.urlApi + 'user',
-            params: { username: username },
-            withCredentials: true
+            url: configService.urlApi + 'user/' + username,
         }
         return $http(request);
 	}

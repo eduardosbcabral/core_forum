@@ -1,0 +1,15 @@
+ <div class="row">
+  <div class="col s12">
+    <div class="col s6" ng-repeat="category in vm.categories">
+      <div class="card teal accent-5">
+        <div class="card-content white-text">
+          <span class="card-title">{{ category.category }}</span>
+          <p>{{ category.description }}</p>
+        </div>
+        <div class="card-action teal darken-1">
+          <a href="/#/category/{{category._id}}/thread">See all threads</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
