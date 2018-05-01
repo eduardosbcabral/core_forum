@@ -10,4 +10,19 @@ type Gender struct {
 	Active			bool			`json:"active"`
 }
 
+type GenderUpdate struct {
+	Id				bson.ObjectId	`json:"_id" bson:"_id"`
+	Description 	string			`json:"description"`
+	Active			bool			`json:"active"`
+}
+
 type Genders []Gender
+
+func NewGender() (gender Gender) {
+	gender = Gender{
+		Id: bson.NewObjectId(),
+		Active: true,
+	}
+
+	return
+}

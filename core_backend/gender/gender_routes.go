@@ -4,7 +4,7 @@ import (
 	"core_backend/config"
 )
 
-var controller = &GenderController{GenderRepository: GenderRepository{}}
+var controller = &GenderController{}
 var routes = config.Routes{{}}
 
 func CreateGenderRoutes() config.Routes {

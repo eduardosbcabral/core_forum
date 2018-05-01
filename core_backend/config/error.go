@@ -1,19 +1,28 @@
 package config
 
 import(
-	"log"
-	"net/http"
+	"reflect"
 )
 
-//Error abstraction
-//NOT WORKING ONLY TESTING
-func ErrorHandler(entity interface{}, err error, w http.ResponseWriter, message string) interface{} {
+//Generic error handler - WRONG
+func ErrorHandler(function interface{}, args ...interface{}) bool {
 
-	if err != nil {
-		log.Print(message, err)
-		w.WriteHeader(http.StatusBadRequest)
-		return entity
-	}
+	v := reflect.ValueOf(function)
+    rargs := make([]reflect.Value, len(args))
+    for i, a := range args {
+        rargs[i] = reflect.ValueOf(a)
+    }
+    fn := v.Call(rargs)
 
-	return entity
+    errorInterface := reflect.TypeOf((*error)(nil)).Elem()
+
+    for _, a := range fn {
+    	if a.Type().Implements(errorInterface) {
+    		if !a.IsNil() {
+    			return true
+    		}
+    	}
+    }
+
+    return false
 }

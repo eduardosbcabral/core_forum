@@ -8,119 +8,138 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type CategoryController struct {
-	CategoryRepository CategoryRepository
-}
+type CategoryController struct {}
+
+const docname = "categories"
 
 func (cc *CategoryController) Index(w http.ResponseWriter, r *http.Request) {
-	categories, err := cc.CategoryRepository.GetCategories()
+
+	result := Categories{}	
+
+	err := config.FindAllActivated(&result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return categories.")
-		return
-	}
 
-	config.RespondWithJson(w, http.StatusOK, categories)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (cc *CategoryController) IndexAll(w http.ResponseWriter, r *http.Request) {
-	categories, err := cc.CategoryRepository.GetAllCategories()
+
+	result := Categories{}	
+
+	err := config.FindAll(&result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return categories.")
-		return
-	}
 
-	config.RespondWithJson(w, http.StatusOK, categories)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (cc *CategoryController) Create(w http.ResponseWriter, r *http.Request) {
-	var c Category
+	
+	category := NewCategory()
 
-	err := config.DecodeJson(r.Body, &c)
+	if !config.BodyValidate(r, &category) {
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+		
 		return
 	}
 
-	err = config.Validate.Struct(c)
+	err := config.Insert(&category, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
 
-	category, err := cc.CategoryRepository.InsertCategory(c)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't insert category.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
+		
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusCreated, category)
+	config.HttpResponse(w, http.StatusOK, category)
+
+	return
 }
 
 func (cc *CategoryController) Show(w http.ResponseWriter, r *http.Request) {
+	
 	id := mux.Vars(r)["id"]
+	result := Category{}
 
-	category, err := cc.CategoryRepository.GetCategory(id)
+	err := config.FindOne(id, &result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't find category.")
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, category)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (cc *CategoryController) Update(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	var c Category
-
-	err := config.DecodeJson(r.Body, &c)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
-		return
-	}
-
-	err = config.Validate.Struct(c)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
 	
-	category, err := cc.CategoryRepository.UpdateCategory(id, c)
+	id := mux.Vars(r)["id"]
+	category := CategoryUpdate{}
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't update category.")
+	if !config.BodyValidate(r, &category) {
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, category)
+	result, err := config.Update(category, docname, id)
+
+	if err != nil {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
+		
+		return
+	}
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (cc *CategoryController) Destroy(w http.ResponseWriter, r *http.Request) {
+	
 	id := mux.Vars(r)["id"]
+	ds := config.DesactivateStruct{}
 
-	var ds config.DesactivateStruct
+	if !config.BodyValidate(r, &ds) {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
 
-	err := config.DecodeJson(r.Body, &ds)	
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
 	}
 
-	_, err = cc.CategoryRepository.DeleteCategory(id, ds)
+	_, err := config.Update(ds, docname, id)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't delete category.")
-		return
-	}
 
-	config.RespondWithMessage(w, http.StatusOK, "Category successfully deleted.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, config.Responses["destroyed"])
+
+	return
 }

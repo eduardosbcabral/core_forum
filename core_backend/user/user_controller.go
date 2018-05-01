@@ -2,6 +2,7 @@ package user
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -13,134 +14,162 @@ type UserController struct {
 }
 
 func (uu *UserController) Index(w http.ResponseWriter, r *http.Request) {
-	users, err := uu.UserRepository.GetUsers()
+	
+	result := Users{}	
+
+	err := config.FindAllActivated(&result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return users.")
-		return
-	}
 
-	config.RespondWithJson(w, http.StatusOK, users)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (uu *UserController) IndexAll(w http.ResponseWriter, r *http.Request) {
-	users, err := uu.UserRepository.GetAllUsers()
+	
+	result := Users{}	
+
+	err := config.FindAll(&result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return users.")
-		return
-	}
 
-	config.RespondWithJson(w, http.StatusOK, users)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (uu *UserController) Create(w http.ResponseWriter, r *http.Request) {
-	var u User
-
-	err := config.DecodeJson(r.Body, &u)
 	
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+	user := User{}
+
+	if !config.BodyValidate(r, &user) {
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+		
 		return
 	}
 
-	err = config.Validate.Struct(u)
+	user.Username = strings.ToLower(user.Username)
+	user.Email = strings.ToLower(user.Email)
+
+	err := config.Insert(&user, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
 
-	user, err := uu.UserRepository.InsertUser(u)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't insert user.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
+		
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusCreated, user)
+	config.HttpResponse(w, http.StatusOK, user)
+
+	return
 }
 
 func (uu *UserController) Show(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
+	username = strings.ToLower(username)
 
-	user, err := uu.UserRepository.GetUser(username)
+	result := UserProtected{}
+
+	err := config.FindOne(username, &result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't find user.")
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, user)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (uu *UserController) Login(w http.ResponseWriter, r *http.Request) {
-	var u UserLogin
-
-	err := config.DecodeJson(r.Body, &u)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
-		return
-	}
 	
-	_, err = uu.UserRepository.Login(u)
+	ul := UserLogin{}
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong username or password.")
+	if !config.BodyValidate(r, &ul) {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+
 		return
 	}
 
-	config.RespondWithMessage(w, http.StatusOK, "Logged In.")	
+	_, err := uu.UserRepository.Login(ul)
+
+	if err != nil {
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-login"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, config.Responses["login"])
+
+	return
 }
 
 func (uu *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
 
-	var u User
+	user := UserUpdate{}
 
-	err := config.DecodeJson(r.Body, &u)
+	if !config.BodyValidate(r, &user) {
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+
 		return
 	}
 
-	err = config.Validate.Struct(u)
+	result, err := config.Update(user, docname, username)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
-	
-	user, err := uu.UserRepository.UpdateUser(username, u)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't update user.")
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
+		
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, user)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (uu *UserController) Destroy(w http.ResponseWriter, r *http.Request) {
-	username := mux.Vars(r)["username"]
-
-	var ds config.DesactivateStruct
-
-	err := config.DecodeJson(r.Body, &ds)
 	
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+	username := mux.Vars(r)["username"]
+	ds := config.DesactivateStruct{}
+
+	if !config.BodyValidate(r, &ds) {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+
 		return
 	}
 
-	_, err = uu.UserRepository.DeleteUser(username, ds)
+	_, err := config.Update(ds, docname, username)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't delete user.")
-		return
-	}
 
-	config.RespondWithMessage(w, http.StatusOK, "User successfully deleted.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, config.Responses["destroyed"])
+
+	return
 }

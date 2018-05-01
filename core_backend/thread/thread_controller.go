@@ -11,122 +11,138 @@ import (
 type ThreadController struct {
 	ThreadRepository ThreadRepository
 }
-
+	
 func (tc *ThreadController) Index(w http.ResponseWriter, r *http.Request) {
+	
 	categoryId := mux.Vars(r)["categoryId"]
+	result := Threads{}
 
-	threads, err := tc.ThreadRepository.GetThreads(categoryId)
+	err := tc.ThreadRepository.GetThreads(categoryId, &result)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return threads.")
-		return
-	}
 
-	config.RespondWithJson(w, http.StatusOK, threads)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (tc *ThreadController) IndexAll(w http.ResponseWriter, r *http.Request) {
-	threads, err := tc.ThreadRepository.GetAllThreads()
+	
+	result := Threads{}	
+
+	err := config.FindAll(&result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return threads.")
-		return
-	}
 
-	config.RespondWithJson(w, http.StatusOK, threads)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (tc *ThreadController) Create(w http.ResponseWriter, r *http.Request) {
 
-	var t Thread
+	thread := NewThread()
 
-	err := config.DecodeJson(r.Body, &t)
+	if !config.BodyValidate(r, &thread) {
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+		
 		return
 	}
 
-	err = config.Validate.Struct(t)
+	err := config.Insert(&thread, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
 
-	thread, err := tc.ThreadRepository.InsertThread(t)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't insert thread.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
+		
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusCreated, thread)
+	config.HttpResponse(w, http.StatusOK, thread)
+
+	return
 }
 
 func (tc *ThreadController) Show(w http.ResponseWriter, r *http.Request) {
+	
 	categoryId := mux.Vars(r)["categoryId"]
 	threadId := mux.Vars(r)["threadId"]
+	result := Thread{}
 
-	thread, err := tc.ThreadRepository.GetThread(categoryId, threadId)
+	err := tc.ThreadRepository.GetThread(categoryId, threadId, &result)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't find thread.")
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, thread)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (tc *ThreadController) Update(w http.ResponseWriter, r *http.Request) {
+	
 	categoryId := mux.Vars(r)["categoryId"]
 	threadId := mux.Vars(r)["threadId"]
+	thread := ThreadUpdate{}
 
-	var t Thread
+	if !config.BodyValidate(r, &thread) {
 
-	err := config.DecodeJson(r.Body, &t)
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
 	}
 
-	err = config.Validate.Struct(t)
+	result, err := config.Update(thread, docname, categoryId, threadId)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
-	
-	thread, err := tc.ThreadRepository.UpdateThread(categoryId, threadId, t)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't update thread.")
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
+		
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, thread)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (tc *ThreadController) Destroy(w http.ResponseWriter, r *http.Request) {
 	categoryId := mux.Vars(r)["categoryId"]
 	threadId := mux.Vars(r)["threadId"]
+	ds := config.DesactivateStruct{}
 
-	var ds config.DesactivateStruct
+	if !config.BodyValidate(r, &ds) {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
 
-	err := config.DecodeJson(r.Body, &ds)	
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
 	}
 
-	_, err = tc.ThreadRepository.DeleteThread(categoryId, threadId, ds)
+	_, err := config.Update(ds, docname, categoryId, threadId)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't delete thread.")
-		return
-	}
 
-	config.RespondWithMessage(w, http.StatusOK, "Thread successfully deleted.")	
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, config.Responses["destroyed"])
+
+	return
 }

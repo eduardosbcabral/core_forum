@@ -17,6 +17,7 @@ import(
 func StartServer() {
 	config.ConnectToDatabase()
 	config.StartValidator()
+	StartCustomValidators()
 
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) 
  	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
@@ -41,4 +42,9 @@ func CreateAllRoutes() (routes *mux.Router){
 	routes = config.NewRouter(appRoutes)
 
 	return routes
+}
+
+func StartCustomValidators() {
+	config.Validate.RegisterValidation("used-username", user.ValidateUsedUsername)
+	config.Validate.RegisterValidation("used-email", user.ValidateUsedEmail)
 }

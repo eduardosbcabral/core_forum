@@ -4,7 +4,7 @@ import (
 	"core_backend/config"
 )
 
-var controller = &CategoryController{CategoryRepository: CategoryRepository{}}
+var controller = &CategoryController{}
 var routes = config.Routes{{}}
 
 func CreateCategoryRoutes() config.Routes {

@@ -8,119 +8,139 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type GenderController struct {
-	GenderRepository GenderRepository
-}
+type GenderController struct {}
+
+const docname = "genders"
 
 func (gc *GenderController) Index(w http.ResponseWriter, r *http.Request) {
-	genders, err := gc.GenderRepository.GetGenders()
 
-	if err != nil {		
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return genders.")
+	result := Genders{}	
+
+	err := config.FindAllActivated(&result, docname)
+
+	if err != nil {
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
 		return
-	}
+	}	
 
-	config.RespondWithJson(w, http.StatusOK, genders)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (gc *GenderController) IndexAll(w http.ResponseWriter, r *http.Request) {
-	genders, err := gc.GenderRepository.GetAllGenders()
+	
+	result := Genders{}	
 
-	if err != nil {		
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't return genders.")
+	err := config.FindAll(&result, docname)
+
+	if err != nil {
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
 		return
-	}
+	}	
 
-	config.RespondWithJson(w, http.StatusOK, genders)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (gc *GenderController) Create(w http.ResponseWriter, r *http.Request) {
-	var g Gender
+	
+	gender := NewGender()
 
-	err := config.DecodeJson(r.Body, &g)
+	if !config.BodyValidate(r, &gender) {
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+		
 		return
 	}
 
-	err = config.Validate.Struct(g)
+	err := config.Insert(&gender, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
 
-	gender, err := gc.GenderRepository.InsertGender(g)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't insert gender.")
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
+		
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusCreated, gender)
+	config.HttpResponse(w, http.StatusOK, gender)
+
+	return
+
 }
 
 func (gc *GenderController) Show(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
 
-	gender, err := gc.GenderRepository.GetGender(id)
+	id := mux.Vars(r)["id"]
+	result := Gender{}
+
+	err := config.FindOne(id, &result, docname)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't find gender.")
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, gender)
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (gc *GenderController) Update(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	var g Gender
-
-	err := config.DecodeJson(r.Body, &g)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
-		return
-	}
-
-	err = config.Validate.Struct(g)
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong data.")
-		return	
-	}
 	
-	gender, err := gc.GenderRepository.UpdateGender(id, g)
+	id := mux.Vars(r)["id"]
+	gender := GenderUpdate{}
 
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't update gender.")
+	if !config.BodyValidate(r, &gender) {
+
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+
 		return
 	}
 
-	config.RespondWithJson(w, http.StatusOK, gender)
+	result, err := config.Update(gender, docname, id)
+
+	if err != nil {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
+		
+		return
+	}
+
+	config.HttpResponse(w, http.StatusOK, result)
+
+	return
 }
 
 func (gc *GenderController) Destroy(w http.ResponseWriter, r *http.Request) {
+	
 	id := mux.Vars(r)["id"]
+	ds := config.DesactivateStruct{}
 
-	var ds config.DesactivateStruct
+	if !config.BodyValidate(r, &ds) {
+		
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
 
-	err := config.DecodeJson(r.Body, &ds)	
-
-	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Wrong JSON.")
 		return
 	}
 
-	_, err = gc.GenderRepository.DeleteGender(id, ds)
+	_, err := config.Update(ds, docname, id)
 
 	if err != nil {
-		config.RespondWithMessage(w, http.StatusBadRequest, "Can't delete gender.")
-		return
-	}
 
-	config.RespondWithMessage(w, http.StatusOK, "Gender successfully deleted.")	
+		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
+
+		return
+	}	
+
+	config.HttpResponse(w, http.StatusOK, config.Responses["destroyed"])
+
+	return
 }
