@@ -5,12 +5,12 @@ import(
 	"log"
 
 
-	"core_backend/config"
-	"core_backend/user"
-	"core_backend/gender"
-	"core_backend/category"
-	"core_backend/thread"
-	"core_backend/auth"
+	"github.com/eduardosbcabral/core_forum/config"
+	"github.com/eduardosbcabral/core_forum/user"
+	"github.com/eduardosbcabral/core_forum/gender"
+	"github.com/eduardosbcabral/core_forum/category"
+	"github.com/eduardosbcabral/core_forum/thread"
+	"github.com/eduardosbcabral/core_forum/auth"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"

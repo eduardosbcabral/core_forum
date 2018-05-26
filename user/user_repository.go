@@ -4,7 +4,7 @@ import (
 	"strings"
 	"log"
 	
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 
 	"gopkg.in/mgo.v2/bson"
 )

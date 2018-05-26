@@ -1,8 +1,8 @@
 package thread
 
 import (
-	"core_backend/user"
-	"core_backend/category"
+	"github.com/eduardosbcabral/core_forum/user"
+	"github.com/eduardosbcabral/core_forum/category"
 
 	"gopkg.in/mgo.v2/bson"
 

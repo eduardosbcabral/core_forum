@@ -3,7 +3,7 @@ package test
 import(
 	"testing"
 
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 var expectedResponses = map[string]string {

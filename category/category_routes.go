@@ -1,7 +1,7 @@
 package category
 
 import (
-	"core_backend/config"
+	"https://github.com/eduardosbcabral/core_forum/config"
 )
 
 var controller = &CategoryController{}

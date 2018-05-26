@@ -1,7 +1,7 @@
 package thread
 
 import (
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 	"log"
 
 	"gopkg.in/mgo.v2/bson"

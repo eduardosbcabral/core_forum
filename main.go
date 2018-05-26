@@ -1,7 +1,7 @@
 package main
 
 import(
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 func main() {

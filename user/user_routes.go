@@ -1,7 +1,7 @@
 package user
 
 import (
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 var Controller = &UserController{UserRepository: UserRepository{}}

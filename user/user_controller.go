@@ -6,8 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"core_backend/config"
-	"core_backend/auth"
+	"github.com/eduardosbcabral/core_forum/config"
+	"github.com/eduardosbcabral/core_forum/auth"
 )
 
 type UserController struct {

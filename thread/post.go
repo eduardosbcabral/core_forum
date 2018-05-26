@@ -2,7 +2,7 @@ package thread
 
 import (
 	"time"
-	"core_backend/user"
+	"github.com/eduardosbcabral/core_forum/user"
 
 	"gopkg.in/mgo.v2/bson"
 )

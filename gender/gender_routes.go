@@ -1,7 +1,7 @@
 package gender
 
 import (
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 var controller = &GenderController{}

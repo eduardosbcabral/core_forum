@@ -3,8 +3,8 @@ package user
 import (
 	"strings"
 
-	"core_backend/gender"
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/gender"
+	"github.com/eduardosbcabral/core_forum/config"
 
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2/bson"

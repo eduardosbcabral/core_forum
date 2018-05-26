@@ -9,7 +9,7 @@ import(
 	"testing"
 	"log"
 
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 const(
