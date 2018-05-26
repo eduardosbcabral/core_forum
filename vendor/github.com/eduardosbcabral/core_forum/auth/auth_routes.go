@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/eduardosbcabral/core_forum/config"
+	"core_backend/config"
     "github.com/codegangsta/negroni"
 )
 
