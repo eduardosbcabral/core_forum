@@ -21,32 +21,46 @@
 			"revisionTime": "2018-03-08T23:13:08Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/auth",
-			"revision": ""
+			"checksumSHA1": "uV5+4arg8cnvpAY8NVmdEi3azSg=",
+			"path": "github.com/eduardosbcabral/core_forum",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/category",
-			"revision": ""
+			"checksumSHA1": "hpOLZQoWoSCUwFpz/dn7+5IKmLg=",
+			"path": "github.com/eduardosbcabral/core_forum/auth",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/config",
-			"revision": ""
+			"checksumSHA1": "5+mSccSFbdER709I5RQWrEdCBl8=",
+			"path": "github.com/eduardosbcabral/core_forum/category",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/gender",
-			"revision": ""
+			"checksumSHA1": "cFdg0yJ7/b9Zp46vu+UKRRC5LSI=",
+			"path": "github.com/eduardosbcabral/core_forum/config",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/test",
-			"revision": ""
+			"checksumSHA1": "IkTQBUijgZwaVoEqtpEiYASA/1c=",
+			"path": "github.com/eduardosbcabral/core_forum/gender",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/thread",
-			"revision": ""
+			"checksumSHA1": "Xfvl9NT1JbNdL60WLYlrbpK2Fmk=",
+			"path": "github.com/eduardosbcabral/core_forum/thread",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
-			"path": "github.com/eduardosbcabral/core_forum/tree/master/user",
-			"revision": ""
+			"checksumSHA1": "IYrAS35spQUj/BeVRaM4ePm/Td4=",
+			"path": "github.com/eduardosbcabral/core_forum/user",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
 		},
 		{
 			"checksumSHA1": "b4DmyMT9bicTRVJw1hJXHLhIH+0=",
