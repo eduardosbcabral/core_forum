@@ -10,7 +10,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
 
-	"core_backend/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 var (
