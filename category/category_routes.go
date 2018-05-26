@@ -1,7 +1,7 @@
 package category
 
 import (
-	"https://github.com/eduardosbcabral/core_forum/config"
+	"github.com/eduardosbcabral/core_forum/config"
 )
 
 var controller = &CategoryController{}

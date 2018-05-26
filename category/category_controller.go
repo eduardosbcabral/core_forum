@@ -3,7 +3,7 @@ package category
 import (
 	"net/http"
 
-	"https://github.com/eduardosbcabral/core_forum/config"
+	"github.com/eduardosbcabral/core_forum/config"
 
 	"github.com/gorilla/mux"
 )
