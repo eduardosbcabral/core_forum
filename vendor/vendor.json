@@ -33,6 +33,42 @@
 			"revisionTime": "2018-05-26T02:55:14Z"
 		},
 		{
+			"checksumSHA1": "5+mSccSFbdER709I5RQWrEdCBl8=",
+			"path": "github.com/eduardosbcabral/core_forum/category",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
+		},
+		{
+			"checksumSHA1": "cFdg0yJ7/b9Zp46vu+UKRRC5LSI=",
+			"path": "github.com/eduardosbcabral/core_forum/config",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
+		},
+		{
+			"checksumSHA1": "IkTQBUijgZwaVoEqtpEiYASA/1c=",
+			"path": "github.com/eduardosbcabral/core_forum/gender",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
+		},
+		{
+			"checksumSHA1": "CBLo9jZK8zlaFkNRCZdNI6ZqfSY=",
+			"path": "github.com/eduardosbcabral/core_forum/test",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
+		},
+		{
+			"checksumSHA1": "Xfvl9NT1JbNdL60WLYlrbpK2Fmk=",
+			"path": "github.com/eduardosbcabral/core_forum/thread",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
+		},
+		{
+			"checksumSHA1": "IYrAS35spQUj/BeVRaM4ePm/Td4=",
+			"path": "github.com/eduardosbcabral/core_forum/user",
+			"revision": "42cacb58c0f2e2a4bee224c95e31b20e4c1d1505",
+			"revisionTime": "2018-05-26T03:45:39Z"
+		},
+		{
 			"checksumSHA1": "b4DmyMT9bicTRVJw1hJXHLhIH+0=",
 			"path": "github.com/go-playground/locales",
 			"revision": "f63010822830b6fe52288ee52d5a1151088ce039",
@@ -67,6 +103,18 @@
 			"path": "github.com/rs/cors",
 			"revision": "694cf2ad010fcf91ee35161f5bfdad8f42ed1b9a",
 			"revisionTime": "2018-05-24T07:14:09Z"
+		},
+		{
+			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "a3beeb748656e13e54256fd2cde19e058f41f60f",
+			"revisionTime": "2017-02-08T22:11:28Z"
+		},
+		{
+			"checksumSHA1": "oVPHWesOmZ02vLq2fglGvf+AMgk=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "a3beeb748656e13e54256fd2cde19e058f41f60f",
+			"revisionTime": "2017-02-08T22:11:28Z"
 		},
 		{
 			"checksumSHA1": "xWCV3HMNKHvDfC95WJx2uwVZJ+0=",

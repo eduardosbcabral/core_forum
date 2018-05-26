@@ -1,0 +1,11 @@
+package config
+
+import(
+	"gopkg.in/go-playground/validator.v9"
+)
+
+var Validate *validator.Validate
+
+func StartValidator() {
+	Validate = validator.New()
+}
