@@ -3,30 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"path": "core_backend/auth",
-			"revision": ""
-		},
-		{
-			"path": "core_backend/category",
-			"revision": ""
-		},
-		{
-			"path": "core_backend/config",
-			"revision": ""
-		},
-		{
-			"path": "core_backend/gender",
-			"revision": ""
-		},
-		{
-			"path": "core_backend/thread",
-			"revision": ""
-		},
-		{
-			"path": "core_backend/user",
-			"revision": ""
-		},
-		{
 			"checksumSHA1": "MwazWD3ttZyMbTOPrzp/XTKbhMo=",
 			"path": "github.com/codegangsta/negroni",
 			"revision": "22c5532ea862c34fdad414e90f8cc00b4f6f4cab",
