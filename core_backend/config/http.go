@@ -5,6 +5,8 @@ import(
 	"encoding/json"
 	"log"
 	"io"
+
+	"gopkg.in/go-playground/validator.v9"
 )
 
 type Response struct {
@@ -17,38 +19,45 @@ type DesactivateStruct struct {
 }
 
 var Responses = map[string]string {
-	"success": `{"code": 200, "message": "Success."}`,
-	"login": `{"code": 200, "message": "Logged in."}`,
-	"bad-json": `{"code": 400, "message": "Wrong JSON."}`,
-	"bad-validate": `{"code": 400, "message": "Wrong data."}`,
-	"bad-insert": `{"code": 400, "message": "Can't insert."}`,
-	"bad-find": `{"code": 400, "message": "Can't get."}`,
-	"bad-update": `{"code": 400, "message": "Can't update."}`,
-	"bad-destroy": `{"code": 400, "message": "Can't destroy."}`,
-	"bad-login": `{"code": 400, "message": "Username or password wrong."}`,
-	"created": `{"code": 201, "message": "Successfully created."}`,
-	"destroyed": `{"code": 201, "message": "Successfully destroyed."}`,
-	"not-found": `{"code": 400, "message": "Can't found."}`,
-	"unauthorized": `{"code": 401, "message": "You're not authorized."}`,
+	"success": `Success.`,
+	"login": `Logged in.`,
+	"bad-json": `Wrong JSON.`,
+	"bad-validate": `Wrong data.`,
+	"bad-insert": `Can't insert.`,
+	"bad-find": `Can't get.`,
+	"bad-update": `Can't update.`,
+	"bad-destroy": `Can't destroy.`,
+	"bad-login": `Wrong username or password.`,
+	"created": `Successfully created.`,
+	"signup": "Account successfully created.",
+	"destroyed": `Successfully destroyed.`,
+	"not-found": `Can't found.`,
+	"unauthorized": `You're not authorized.`,
 }
 
-func BodyValidate(r *http.Request, entity interface{}) bool {
+func BodyValidate(r *http.Request, entity interface{}) interface{} {
 
 	err := DecodeJson(r.Body, entity)
 
 	if err != nil {
 		log.Println("[ERROR] Can't decode json: ", err)
-		return false
+		return Responses["bad-json"]
 	}
 
 	err = Validate.Struct(entity)
 
 	if err != nil {
 		log.Println("[ERROR] Can't validate struct: ", err)
-		return false
+
+		var fields []string
+
+		for _, value := range err.(validator.ValidationErrors) {
+			fields = append(fields, value.Tag() + ":" + value.Field())
+		}
+		return fields[len(fields)-1]
 	}
 
-	return true
+	return nil
 }
 
 func DecodeJson(body io.Reader, entity interface{}) (err error) {
@@ -67,4 +76,16 @@ func HttpResponse(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(payload)
+}
+
+func HttpMessageResponse(w http.ResponseWriter, code int, payload interface{}) {
+
+	r := Response{
+		StatusCode: code,
+		Message: payload.(string),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(r)
 }

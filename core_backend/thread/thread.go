@@ -16,19 +16,17 @@ type Thread struct {
 	Date 		time.Time 				`json:"date"`
 	Category 	category.Category		`json:"category" validate:"required"`
 	User 		user.UserProtected		`json:"user" validate:"required"`
-	Posts 		Posts					`json:"posts"`
 	Active		bool					`json:"active"`
 }
 
 type ThreadUpdate struct {
-	Id 			bson.ObjectId			`json:"_id" bson:"_id"`
-	Title		string					`json:"title"`
-	Content		string					`json:"content"`
-	Date 		time.Time 				`json:"date"`
-	Category 	category.CategoryUpdate	`json:"category"`
-	User 		user.UserProtected		`json:"user"`
-	Posts 		Posts					`json:"posts"`
-	Active		bool					`json:"active"`
+	Id 			bson.ObjectId			`json:"_id" bson:"_id,omitempty"`
+	Title		string					`json:"title" bson:"title,omitempty"`
+	Content		string					`json:"content" bson:"content,omitempty"`
+	Date 		time.Time 				`json:"date" bson:"date,omitempty"`
+	Category 	category.CategoryUpdate	`json:"category" bson:"category,omitempty"`
+	User 		user.UserProtected		`json:"user" bson:"user,omitempty"`
+	Active		*bool					`json:"active" bson:"active,omitempty"`
 }
 
 type Threads []Thread

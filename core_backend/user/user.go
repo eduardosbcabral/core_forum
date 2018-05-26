@@ -14,19 +14,20 @@ type User struct {
 	Username 	string			`json:"username" validate:"required,used-username"`
 	Email		string			`json:"email" validate:"required,email,used-email"`
 	Image		string			`json:"image" validate:"omitempty,url"`
-	Password	string			`json:"password" validate:"required"`
+	Password	string			`json:"password" validate:"required,password-length"`
 	Gender 		gender.Gender	`json:"gender" validate:"required"`
 	Admin		bool			`json:"admin"`
 	Active		bool			`json:"active"`
 }
 
 type UserUpdate struct {
-	Username 	string				`json:"username" validate:"used-username"`
-	Email		string				`json:"email" validate:"used-email"`
-	Image		string				`json:"image" validate:"omitempty,url"`
-	Password	string				`json:"password"`
-	Gender 		gender.GenderUpdate	`json:"gender"`
-	Active		bool				`json:"active"`
+	Username 	string				`json:"username" bson:"username,omitempty" validate:"used-username"`
+	Email		string				`json:"email" bson:"email,omitempty" validate:"used-email"`
+	Image		string				`json:"image" bson:"image,omitempty" validate:"omitempty,url"`
+	Password	string				`json:"password,omitempty" bson:"password,omitempty" validate:"omitempty,password-length"`
+	Gender 		gender.GenderUpdate	`json:"gender" bson:"gender,omitempty"`
+	Admin		*bool				`json:"admin" bson:"admin,omitempty"`
+	Active		*bool				`json:"active" bson:"active,omitempty"`
 }
 
 type UserProtected struct {
@@ -78,4 +79,13 @@ func ValidateUsedEmail(email validator.FieldLevel) bool {
 	}
 
 	return result.Email == ""
+}
+
+func ValidatePasswordLength(password validator.FieldLevel) bool {
+
+	if len(password.Field().String()) < 6 {
+		return false
+	}
+
+	return true
 }

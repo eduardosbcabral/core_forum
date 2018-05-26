@@ -4,48 +4,48 @@ import (
 	"core_backend/config"
 )
 
-var controller = &ThreadController{ThreadRepository: ThreadRepository{}}
-var routes = config.Routes{{}}
+var controllerT = &ThreadController{ThreadRepository: ThreadRepository{}}
+var routesT = config.Routes{{}}
 
 func CreateThreadRoutes() config.Routes {
-	routes := config.Routes{
+	routesT := config.Routes{
 		config.Route{
 			"Index - Thread",
 			"GET",
 			"/{categoryId}/thread",
-			controller.Index,
+			controllerT.Index,
 		},
 		config.Route{
 			"Create - Thread",
 			"POST",
 			"/{categoryId}/thread",
-			controller.Create,
+			controllerT.Create,
 		},
 		config.Route{
 			"Show - Thread",
 			"GET",
 			"/{categoryId}/thread/{threadId}",
-			controller.Show,
+			controllerT.Show,
 		},
 		config.Route{
 			"Update - Thread",
 			"PUT",
 			"/{categoryId}/thread/{threadId}",
-			controller.Update,
+			controllerT.Update,
 		},
 		config.Route{
 			"Destroy - Thread",
 			"DELETE",
 			"/{categoryId}/thread/{threadId}",
-			controller.Destroy,
+			controllerT.Destroy,
 		},
 		config.Route{
 			"Index(All) - Thread",
 			"GET",
 			"/threadAll",
-			controller.IndexAll,
+			controllerT.IndexAll,
 		},
 	}
 
-	return routes
+	return routesT
 }

@@ -4,7 +4,7 @@ import (
 	"core_backend/config"
 )
 
-var controller = &UserController{UserRepository: UserRepository{}}
+var Controller = &UserController{UserRepository: UserRepository{}}
 var routes = config.Routes{{}}
 
 func CreateUserRoutes() config.Routes {
@@ -13,43 +13,43 @@ func CreateUserRoutes() config.Routes {
 			"Index - User",
 			"GET",
 			"/user",
-			controller.Index,
+			Controller.Index,
 		},
 		config.Route{
 			"Create - User",
 			"POST",
 			"/user",
-			controller.Create,
+			Controller.Create,
 		},
 		config.Route{
+			"Login - User",
+			"POST",
+			"/login",
+			Controller.Login,
+		},
+		/*config.Route{
 			"Show - User",
 			"GET",
 			"/user/{username}",
 			controller.Show,
 		},
 		config.Route{
-			"Login - User",
-			"POST",
-			"/login",
-			controller.Login,
-		},
-		config.Route{
 			"Update - User",
 			"PUT",
 			"/user/{username}",
-			controller.Update,
+			Controller.Update,
 		},
 		config.Route{
 			"Destroy - User",
 			"DELETE",
 			"/user/{username}",
-			controller.Destroy,
-		},
+			Controller.Destroy,
+		},*/
 		config.Route{
 			"Index(All) - User",
 			"GET",
 			"/userAll",
-			controller.IndexAll,
+			Controller.IndexAll,
 		},
 	}
 

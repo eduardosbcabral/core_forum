@@ -21,7 +21,7 @@ func (tc *ThreadController) Index(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["not-found"])
 
 		return
 	}	
@@ -35,11 +35,11 @@ func (tc *ThreadController) IndexAll(w http.ResponseWriter, r *http.Request) {
 	
 	result := Threads{}	
 
-	err := config.FindAll(&result, docname)
+	err := config.FindAll(&result, docnameT)
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["not-found"])
 
 		return
 	}	
@@ -53,18 +53,20 @@ func (tc *ThreadController) Create(w http.ResponseWriter, r *http.Request) {
 
 	thread := NewThread()
 
-	if !config.BodyValidate(r, &thread) {
-
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
-		
-		return
-	}
-
-	err := config.Insert(&thread, docname)
+	err := config.BodyValidate(r, &thread)
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
+
+		return
+	}
+
+	err = config.Insert(&thread, docnameT)
+
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
 		
 		return
 	}
@@ -84,7 +86,7 @@ func (tc *ThreadController) Show(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["not-found"])
 
 		return
 	}
@@ -100,18 +102,20 @@ func (tc *ThreadController) Update(w http.ResponseWriter, r *http.Request) {
 	threadId := mux.Vars(r)["threadId"]
 	thread := ThreadUpdate{}
 
-	if !config.BodyValidate(r, &thread) {
+	err := config.BodyValidate(r, &thread)
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
 
 		return
 	}
 
-	result, err := config.Update(thread, docname, categoryId, threadId)
+	result, err := config.Update(thread, docnameT, categoryId, threadId)
 
 	if err != nil {
 		
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
 		
 		return
 	}
@@ -126,23 +130,25 @@ func (tc *ThreadController) Destroy(w http.ResponseWriter, r *http.Request) {
 	threadId := mux.Vars(r)["threadId"]
 	ds := config.DesactivateStruct{}
 
-	if !config.BodyValidate(r, &ds) {
-		
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+	err := config.BodyValidate(r, &ds)
+
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
 
 		return
 	}
 
-	_, err := config.Update(ds, docname, categoryId, threadId)
+	_, err = config.Update(ds, docnameT, categoryId, threadId)
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
 
 		return
 	}	
 
-	config.HttpResponse(w, http.StatusOK, config.Responses["destroyed"])
+	config.HttpMessageResponse(w, http.StatusOK, config.Responses["destroyed"])
 
 	return
 }

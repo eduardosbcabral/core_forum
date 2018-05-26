@@ -1,15 +1,15 @@
-app.controller('navigationController', function navigationController($scope, userService) {
+app.controller('navigationController', function navigationController($scope, userService, toastr) {
 	var vm = this;
 
 	vm.getLoggedUser = getLoggedUser;
 
 	function getLoggedUser() {
-		userService.getLoggedUser('theduardds')
+		userService.getUser('theduardds')
 		.then(function(obj) {
 			$scope.user = obj.data;
 		})
 		.catch(function(obj) {
-			console.log(obj);
+			toastr.error(obj.data.message, 'Error');
 		});
 	}
 	

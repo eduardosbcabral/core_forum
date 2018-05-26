@@ -1,4 +1,5 @@
 var app = angular.module('core', 
 						[	
-							'ngRoute'
+							'ngRoute',
+							'toastr'
 						]);

@@ -1,41 +1,49 @@
 <div>
   <div class="row">
-    <div class="col s12">
+    <div class="col s6 offset-s3">
       <ul tabs class="tabs z-depth-1">
         <li class="tab col s6" ng-click="vm.currentTab = 'User'"><a class="active black-text text-darken-3" href="">Users <span class="badge" style="float:none">{{ vm.users.length }}</span></a></li>
         <li class="tab col s6" ng-click="vm.currentTab = 'Gender'"><a href="" class="black-text text-darken-3">Genders <span class="badge" style="float:none;">{{ vm.genders.length }}</span></a></li>
       </ul>
     </div>
-    <div ng-show="vm.currentTab=='User'" class="col s12" style="margin-top:20px">
+    <div ng-show="vm.currentTab=='User'" class="col s10 offset-s1" style="margin-top:20px">
       <table class="highlight centered responsive white z-depth-1">
           <thead>
             <tr>
+                <th>Avatar</th>
                 <th>Username</th>
                 <th>Email</th>
-                <th>Password</th>
+                <th>Gender</th>
+                <th>Admin</th>
+                <th ng-show="vm.deleteUsers">Delete</th>
             </tr>
           </thead>
           <tbody ng-repeat="user in vm.users">
-            <tr>
+            <tr style="cursor: pointer" ng-click="vm.openModalEditUser(user);" href="#modalEditUser">
+              <td><span class="avatar-status"><img ng-src="{{user.image}}"></img></span></td>
               <td>{{ user.username }}</td>
               <td>{{ user.email }}</td>
-              <td>{{ user.password }}</td>
+              <td>{{ user.gender.description }}</td>
+              <td>{{ user.admin }}</td>
+              <td ng-show="vm.deleteUsers"><button class="waves-effect waves-green red white-text btn-flat" ng-click="$event.stopPropagation();
+;vm.deleteUser(user)"><i class="material-icons">delete</i></button></td>
             </tr>
           </tbody>
       </table>
     </div>
-    <div ng-show="vm.currentTab=='Gender'" class="col s12" style="margin-top:20px">
+    <div ng-show="vm.currentTab=='Gender'" class="col s6 offset-s3" style="margin-top:20px">
        <table class="highlight centered responsive white z-depth-1">
           <thead>
             <tr>
-                <th>Id</th>
                 <th>Description</th>
+                <th ng-show="vm.deleteGenders">Delete</th>
             </tr>
           </thead>
           <tbody ng-repeat="gender in vm.genders">
-            <tr>
-              <td>{{ gender._id }}</td>
+            <tr style="cursor: pointer" ng-click="vm.openModalEditGender(gender);" href="#modalEditGender">
               <td>{{ gender.description }}</td>
+              <td ng-show="vm.deleteGenders"><button class="waves-effect waves-green red white-text btn-flat" ng-click="$event.stopPropagation();
+;vm.deleteGender(gender)"><i class="material-icons">delete</i></button></td>
             </tr>
           </tbody>
        </table>
@@ -43,12 +51,134 @@
   </div>
 </div>
 
-<div class="fixed-action-btn">
+<div ng-show="vm.currentTab=='User'" class="fixed-action-btn">
   <a class="btn-floating btn-large core-color">
     <i class="large material-icons">mode_edit</i>
   </a>
   <ul>
-    <li><a class="btn-floating green"><i class="material-icons">add</i></a></li>
-    <li><a class="btn-floating red"><i class="material-icons">remove</i></a></li>
+    <li><a title="Add User" class="btn-floating green modal-trigger" href="#modalAddUser" ng-click="vm.openModalAddUser()"><i class="material-icons">add</i></a></li>
+    <li><a title="Remove User" class="btn-floating red" ng-click="vm.deleteUsers=true"><i class="material-icons">remove</i></a></li>
   </ul>
+</div>
+
+<div ng-show="vm.currentTab=='Gender'" class="fixed-action-btn">
+  <a class="btn-floating btn-large core-color">
+    <i class="large material-icons">mode_edit</i>
+  </a>
+  <ul>
+    <li><a title="Add Gender" class="btn-floating green modal-trigger" href="#modalAddGender" ng-click="vm.openModalAddGender()"><i class="material-icons">add</i></a></li>
+    <li><a title="Remove Gender" class="btn-floating red" ng-click="vm.deleteGenders=true"><i class="material-icons">remove</i></a></li>
+  </ul>
+</div>
+
+<div id="modalAddUser" class="modal">
+  <div class="modal-content">
+    <h4>Add User</h4>
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="username" type="text" class="validate" ng-model="vm.user.username" required>
+            <label for="username">Username</label>
+          </div>
+          <div class="input-field inline col s6">
+              <input id="email_inline" type="email" class="validate" ng-model="vm.user.email" required>
+              <label for="email_inline">Email</label>
+              <span class="helper-text" data-error="wrong" data-success="right"></span>
+            </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <select ng-model="vm.user.gender" ng-options="gender.description for gender in vm.genders track by gender.description" required>
+              <option value="" disabled selected>Choose your gender</option>
+            </select>
+            <label>Gender</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="image" type="text" class="validate" ng-model="vm.user.image" required>
+            <label for="image">Avatar URL</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="password" type="password" class="validate" ng-model="vm.user.password" requireds>
+            <label for="password">Password</label>
+          </div>
+        </div>
+      </form>
+  </div>
+  <div class="modal-footer">
+    <a href="" class="waves-effect waves-green green white-text btn-flat" ng-disabled="!vm.user" ng-click="vm.createUser(vm.user)">Create</a>
+  </div>
+</div>
+
+<div id="modalEditUser" class="modal">
+  <div class="modal-content">
+    <h4>Edit User</h4>
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="editUsername" type="text" class="validate" ng-model="vm.editedUser.username">
+            <label for="editUsername" class="active">Username</label>
+          </div>
+          <div class="input-field inline col s6">
+              <input id="editEmail_inline" type="email" class="validate" ng-model="vm.editedUser.email">
+              <label for="editEmail_inline">Email</label>
+              <span class="helper-text" data-error="wrong" data-success="right"></span>
+            </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <select ng-model="vm.editedUser.gender" ng-options="gender.description for gender in vm.genders track by gender.description">
+              <option value="" disabled selected>Choose your gender</option>
+            </select>
+            <label>Gender</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="editImage" type="text" class="validate" ng-model="vm.editedUser.image">
+            <label for="editImage">Avatar URL</label>
+          </div>
+        </div>
+      </form>
+  </div>
+  <div class="modal-footer">
+    <a href="" class="waves-effect waves-green green white-text btn-flat" ng-disabled="!vm.editedUser" ng-click="vm.editUser(vm.editedUser);">Edit</a>
+  </div>
+</div>
+
+<div id="modalAddGender" class="modal">
+  <div class="modal-content">
+    <h4>Add Gender</h4>
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="description" type="text" class="validate" ng-model="vm.gender.description" required>
+            <label for="description">Description</label>
+          </div>
+        </div>
+      </form>
+  </div>
+  <div class="modal-footer">
+    <a href="" class="waves-effect waves-green green white-text btn-flat" ng-disabled="!vm.gender" ng-click="vm.createGender(vm.gender)">Create</a>
+  </div>
+</div>
+
+<div id="modalEditGender" class="modal">
+  <div class="modal-content">
+    <h4>Edit User</h4>
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="editDescription" type="text" class="validate" ng-model="vm.editedGender.description">
+            <label for="editDescription" class="active">Description</label>
+          </div>
+        </div>
+      </form>
+  </div>
+  <div class="modal-footer">
+    <a href="" class="waves-effect waves-green green white-text btn-flat" ng-disabled="!vm.editedGender" ng-click="vm.editGender(vm.editedGender);">Edit</a>
+  </div>
 </div>

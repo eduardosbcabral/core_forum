@@ -11,9 +11,9 @@ type Gender struct {
 }
 
 type GenderUpdate struct {
-	Id				bson.ObjectId	`json:"_id" bson:"_id"`
-	Description 	string			`json:"description"`
-	Active			bool			`json:"active"`
+	Id				bson.ObjectId	`json:"_id" bson:"_id,omitempty"`
+	Description 	string			`json:"description" bson:"description,omitempty"`
+	Active			*bool			`json:"active" bson:"active,omitempty"`
 }
 
 type Genders []Gender

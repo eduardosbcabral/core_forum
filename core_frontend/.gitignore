@@ -1,5 +1,10 @@
 #ignore bower_components
-bower_components/
+bower_components/*
+!bower_components/materialize
+bower_components/materialize/*
+!bower_components/materialize/dist
+bower_components/materialize/dist/*
+!bower_components/materialize/dist/fonts
 
 #ignore node_modules
 node_modules/

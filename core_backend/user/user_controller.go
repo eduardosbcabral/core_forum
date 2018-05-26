@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"core_backend/config"
+	"core_backend/auth"
 )
 
 type UserController struct {
@@ -21,7 +22,7 @@ func (uu *UserController) Index(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["not-found"])
 
 		return
 	}	
@@ -39,7 +40,7 @@ func (uu *UserController) IndexAll(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["not-found"])
 
 		return
 	}	
@@ -49,30 +50,60 @@ func (uu *UserController) IndexAll(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (uu *UserController) Create(w http.ResponseWriter, r *http.Request) {
+func (uu *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	
-	user := User{}
+	ul := UserLogin{}
 
-	if !config.BodyValidate(r, &user) {
-
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
-		
-		return
-	}
-
-	user.Username = strings.ToLower(user.Username)
-	user.Email = strings.ToLower(user.Email)
-
-	err := config.Insert(&user, docname)
+	err := config.BodyValidate(r, &ul)
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-insert"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
+
+		return
+	}
+
+	user, status := uu.UserRepository.Login(ul)
+
+	if !status {
+
+		config.HttpMessageResponse(w, http.StatusUnauthorized, config.Responses["bad-login"])
+
+		return
+	}	
+
+	token := auth.GenerateJWT(user)
+
+
+	w.Header().Add("Authorization", "Bearer " + token)
+	config.HttpMessageResponse(w, http.StatusOK, config.Responses["login"])
+
+	return
+}
+
+func (uu *UserController) Create(w http.ResponseWriter, r *http.Request) {
+	
+	user := NewUser()
+
+	err := config.BodyValidate(r, &user)
+
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
+
+		return
+	}
+
+	err = uu.UserRepository.InsertUser(&user)
+
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
 		
 		return
 	}
 
-	config.HttpResponse(w, http.StatusOK, user)
+	config.HttpMessageResponse(w, http.StatusOK, config.Responses["signup"])
 
 	return
 }
@@ -87,7 +118,7 @@ func (uu *UserController) Show(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["not-found"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["not-found"])
 
 		return
 	}
@@ -97,39 +128,16 @@ func (uu *UserController) Show(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (uu *UserController) Login(w http.ResponseWriter, r *http.Request) {
-	
-	ul := UserLogin{}
-
-	if !config.BodyValidate(r, &ul) {
-		
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
-
-		return
-	}
-
-	_, err := uu.UserRepository.Login(ul)
-
-	if err != nil {
-
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-login"])
-
-		return
-	}	
-
-	config.HttpResponse(w, http.StatusOK, config.Responses["login"])
-
-	return
-}
-
 func (uu *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
 
 	user := UserUpdate{}
 
-	if !config.BodyValidate(r, &user) {
+	err := config.BodyValidate(r, &user)
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
 
 		return
 	}
@@ -138,7 +146,7 @@ func (uu *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["bad-update"])
 		
 		return
 	}
@@ -153,23 +161,25 @@ func (uu *UserController) Destroy(w http.ResponseWriter, r *http.Request) {
 	username := mux.Vars(r)["username"]
 	ds := config.DesactivateStruct{}
 
-	if !config.BodyValidate(r, &ds) {
-		
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-json"])
+	err := config.BodyValidate(r, &ds)
+
+	if err != nil {
+
+		config.HttpMessageResponse(w, http.StatusBadRequest, err)
 
 		return
 	}
 
-	_, err := config.Update(ds, docname, username)
+	_, err = config.Update(ds, docname, username)
 
 	if err != nil {
 
-		config.HttpResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
+		config.HttpMessageResponse(w, http.StatusBadRequest, config.Responses["bad-destroy"])
 
 		return
 	}	
 
-	config.HttpResponse(w, http.StatusOK, config.Responses["destroyed"])
+	config.HttpMessageResponse(w, http.StatusOK, config.Responses["destroyed"])
 
 	return
 }

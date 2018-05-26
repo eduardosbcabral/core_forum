@@ -13,10 +13,10 @@ type Category struct {
 
 
 type CategoryUpdate struct {
-	Id				bson.ObjectId	`json:"_id" bson:"_id"`
-	Category 		string			`json:"category"`
-	Description 	string			`json:"description"`
-	Active			bool			`json:"active"`
+	Id				bson.ObjectId	`json:"_id" bson:"_id,omitempty"`
+	Category 		string			`json:"category" bson:"category,omitempty"`
+	Description 	string			`json:"description" bson:"description,omitempty"`
+	Active			*bool			`json:"active" bson:"active,omitempty"`
 }
 
 type Categories []Category

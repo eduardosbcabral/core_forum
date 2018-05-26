@@ -16,6 +16,11 @@
 
     "use strict";
 
+
+    $(document).ready(function() {
+        $('.modal').modal();
+    });    
+
     var window_width = $(window).width();
     var openIndex;
 
@@ -186,4 +191,5 @@
         overflow: 'auto'
       })
     }
+
   });

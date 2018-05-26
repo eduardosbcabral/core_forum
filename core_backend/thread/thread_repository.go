@@ -7,13 +7,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-const docname = "threads"
+const docnameT = "threads"
 
 type ThreadRepository struct{}
 
 func (tr ThreadRepository) GetThreads(categoryId string, result *Threads) (err error) {
 
-	c := config.OpenSession(docname)
+	c := config.OpenSession(docnameT)
 
 	err = c.Find(
 			bson.M{
@@ -31,7 +31,7 @@ func (tr ThreadRepository) GetThreads(categoryId string, result *Threads) (err e
 }
 
 func (tr ThreadRepository) GetThread(categoryId string, threadId string, result *Thread) (err error) {
-	c := config.OpenSession(docname)
+	c := config.OpenSession(docnameT)
 
 	err = c.Find(
 				bson.M{

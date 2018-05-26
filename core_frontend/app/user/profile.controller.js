@@ -6,7 +6,7 @@ app.controller('profileController', function profileController($routeParams, use
 	vm.getProfile = getProfile;
 
 	function getProfile() {
-		userService.getLoggedUser(username)
+		userService.getUser(username)
 		.then(function(obj) {
 			vm.user = obj.data;
 		})

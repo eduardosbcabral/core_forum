@@ -5,13 +5,7 @@ import(
 )
 
 func main() {
-
-	err := config.ConnectToDatabase()
-
-	if err != nil {
-		panic(err)
-	}
-
+	StartDatabase()
 	config.StartValidator()
 	StartServer()
 }
